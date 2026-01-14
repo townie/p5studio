@@ -6,7 +6,7 @@ const getAI = () => new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
 
 export const generateSketch = async (prompt: string, currentCode?: string): Promise<string> => {
   const ai = getAI();
-  const model = 'gemini-2-5-flash';
+  const model = 'gemini-3-pro-preview';
 
   const fullPrompt = currentCode
     ? `Current code:\n\`\`\`javascript\n${currentCode}\n\`\`\`\n\nTask: ${prompt}\nModify the code accordingly. Return only the full new code.`
