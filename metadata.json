@@ -1,0 +1,5 @@
+{
+  "name": "P5.AI Studio",
+  "description": "A high-end, minimalist creative coding environment for p5.js powered by Gemini AI. Instantly bootstrap, edit, and iterate on visual sketches with zero friction.",
+  "requestFramePermissions": []
+}
