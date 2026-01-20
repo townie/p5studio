@@ -19,6 +19,8 @@ pnpm preview        # Preview production build
 
 Set `GEMINI_API_KEY` in `.env.local` for AI code generation.
 
+The `@` path alias maps to the project root for imports (e.g., `@/components/CodeEditor`).
+
 ## Architecture
 
 ### State Management
