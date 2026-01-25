@@ -49,6 +49,7 @@ const ViewPage: React.FC = () => {
           visibility: 'public',
           forked_from_id: null,
           fork_depth: 0,
+          folder_id: null,
           tags: ['generative', 'art', 'creative-coding'],
           thumbnail_url: null,
           preview_gif_url: null,

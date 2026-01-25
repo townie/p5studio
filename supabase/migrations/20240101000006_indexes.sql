@@ -156,9 +156,9 @@ CREATE INDEX idx_tags_projects_count ON tags(projects_count DESC);
 -- Add search vector column to projects for full-text search
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS search_vector tsvector
   GENERATED ALWAYS AS (
-    setweight(to_tsvector('english', coalesce(name, '')), 'A') ||
-    setweight(to_tsvector('english', coalesce(description, '')), 'B') ||
-    setweight(to_tsvector('english', array_to_string(tags, ' ')), 'C')
+    setweight(to_tsvector('english'::regconfig, coalesce(name, '')), 'A') ||
+    setweight(to_tsvector('english'::regconfig, coalesce(description, '')), 'B') ||
+    setweight(to_tsvector('english'::regconfig, coalesce(array_to_string(tags, ' '), '')), 'C')
   ) STORED;
 
 -- GIN index for full-text search
@@ -167,9 +167,9 @@ CREATE INDEX idx_projects_search ON projects USING gin(search_vector);
 -- Add search vector to profiles for user search
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS search_vector tsvector
   GENERATED ALWAYS AS (
-    setweight(to_tsvector('english', coalesce(username, '')), 'A') ||
-    setweight(to_tsvector('english', coalesce(display_name, '')), 'B') ||
-    setweight(to_tsvector('english', coalesce(bio, '')), 'C')
+    setweight(to_tsvector('english'::regconfig, coalesce(username, '')), 'A') ||
+    setweight(to_tsvector('english'::regconfig, coalesce(display_name, '')), 'B') ||
+    setweight(to_tsvector('english'::regconfig, coalesce(bio, '')), 'C')
   ) STORED;
 
 -- GIN index for profile search

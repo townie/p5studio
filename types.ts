@@ -78,6 +78,22 @@ export interface ProjectHistoryEntry {
 }
 
 /**
+ * Folder for organizing projects (exclusive - project can only be in one folder)
+ */
+export interface Folder {
+  id: string;
+  user_id: string;
+  name: string;
+  color: string | null;
+  icon: string | null;
+  position: number;
+  created_at: string;
+  updated_at: string;
+  // Optional denormalized count
+  projects_count?: number;
+}
+
+/**
  * Project data stored in the database (maps to projects table)
  */
 export interface Project {
@@ -94,6 +110,8 @@ export interface Project {
   // Forking lineage
   forked_from_id: string | null;
   fork_depth: number;
+  // Organization
+  folder_id: string | null;
   // Metadata
   tags: string[];
   thumbnail_url: string | null;
@@ -230,6 +248,7 @@ export interface CollectionProject {
  */
 export interface CollectionWithProjects extends Collection {
   projects: ProjectWithAuthor[];
+  projects_count?: number;
 }
 
 /**

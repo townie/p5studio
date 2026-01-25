@@ -3,6 +3,7 @@ import { Routes, Route, useParams, useNavigate } from 'react-router-dom';
 import EditorPage from '@/pages/EditorPage';
 import ViewPage from '@/pages/ViewPage';
 import AuthCallback from '@/pages/AuthCallback';
+import ProjectsPage from '@/pages/ProjectsPage';
 import ProfilePage from '@/components/ProfilePage';
 import ProfileSettings from '@/components/ProfileSettings';
 
@@ -55,6 +56,7 @@ const SettingsPageWrapper: React.FC = () => {
  *
  * Routes:
  * /                    - EditorPage (new project)
+ * /editor              - EditorPage (new project, explicit route)
  * /project/:projectId  - EditorPage (existing project)
  * /s/:projectId        - ViewPage (shared view)
  * /@:username          - ProfilePage
@@ -66,10 +68,14 @@ const App: React.FC = () => {
     <Routes>
       {/* Editor routes */}
       <Route path="/" element={<EditorPage />} />
+      <Route path="/editor" element={<EditorPage />} />
       <Route path="/project/:projectId" element={<EditorPage />} />
 
       {/* Shared view route */}
       <Route path="/s/:projectId" element={<ViewPage />} />
+
+      {/* Projects management route */}
+      <Route path="/projects" element={<ProjectsPage />} />
 
       {/* Profile routes */}
       <Route path="/@:username" element={<ProfilePageWrapper />} />
