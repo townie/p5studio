@@ -153,12 +153,26 @@ CREATE INDEX idx_tags_projects_count ON tags(projects_count DESC);
 -- FULL-TEXT SEARCH
 -- ============================================================================
 
+-- Create immutable wrapper function for to_tsvector
+-- Required because to_tsvector(regconfig, text) is STABLE, not IMMUTABLE
+-- but generated columns require IMMUTABLE expressions
+CREATE OR REPLACE FUNCTION immutable_to_tsvector(text)
+RETURNS tsvector AS $$
+  SELECT to_tsvector('english', $1);
+$$ LANGUAGE sql IMMUTABLE;
+
+-- Create immutable wrapper for array_to_string (already immutable, but for consistency)
+CREATE OR REPLACE FUNCTION immutable_array_to_tsvector(text[])
+RETURNS tsvector AS $$
+  SELECT to_tsvector('english', coalesce(array_to_string($1, ' '), ''));
+$$ LANGUAGE sql IMMUTABLE;
+
 -- Add search vector column to projects for full-text search
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS search_vector tsvector
   GENERATED ALWAYS AS (
-    setweight(to_tsvector('english'::regconfig, coalesce(name, '')), 'A') ||
-    setweight(to_tsvector('english'::regconfig, coalesce(description, '')), 'B') ||
-    setweight(to_tsvector('english'::regconfig, coalesce(array_to_string(tags, ' '), '')), 'C')
+    setweight(immutable_to_tsvector(coalesce(name, '')), 'A') ||
+    setweight(immutable_to_tsvector(coalesce(description, '')), 'B') ||
+    setweight(immutable_array_to_tsvector(tags), 'C')
   ) STORED;
 
 -- GIN index for full-text search
@@ -167,9 +181,9 @@ CREATE INDEX idx_projects_search ON projects USING gin(search_vector);
 -- Add search vector to profiles for user search
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS search_vector tsvector
   GENERATED ALWAYS AS (
-    setweight(to_tsvector('english'::regconfig, coalesce(username, '')), 'A') ||
-    setweight(to_tsvector('english'::regconfig, coalesce(display_name, '')), 'B') ||
-    setweight(to_tsvector('english'::regconfig, coalesce(bio, '')), 'C')
+    setweight(immutable_to_tsvector(coalesce(username, '')), 'A') ||
+    setweight(immutable_to_tsvector(coalesce(display_name, '')), 'B') ||
+    setweight(immutable_to_tsvector(coalesce(bio, '')), 'C')
   ) STORED;
 
 -- GIN index for profile search
