@@ -1,21 +1,17 @@
 
-import React, { useEffect, useRef } from 'react';
+import React, { useMemo } from 'react';
 
 interface PreviewProps {
   code: string;
 }
 
 const Preview: React.FC<PreviewProps> = ({ code }) => {
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-
-  useEffect(() => {
-    if (!iframeRef.current) return;
-
-    const htmlContent = `
+  const htmlContent = useMemo(() => {
+    return `
       <!DOCTYPE html>
       <html>
         <head>
-          <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"><\/script>
           <style>
             body { margin: 0; padding: 0; overflow: hidden; background: #0a0a0a; }
             canvas { display: block; }
@@ -24,21 +20,16 @@ const Preview: React.FC<PreviewProps> = ({ code }) => {
         <body>
           <script>
             try {
-              ${code}
+              const code = ${JSON.stringify(code)};
+              eval(code);
             } catch (err) {
               console.error(err);
               document.body.innerHTML = '<div style="color: #ff4444; padding: 20px; font-family: monospace;">' + err.message + '</div>';
             }
-          </script>
+          <\/script>
         </body>
       </html>
     `;
-
-    const blob = new Blob([htmlContent], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    iframeRef.current.src = url;
-
-    return () => URL.revokeObjectURL(url);
   }, [code]);
 
   return (
@@ -47,10 +38,10 @@ const Preview: React.FC<PreviewProps> = ({ code }) => {
         <span className="text-xs font-medium text-zinc-500 uppercase tracking-widest">Preview — Live</span>
       </div>
       <iframe
-        ref={iframeRef}
         title="p5-preview"
         className="w-full h-full border-none pt-10"
         sandbox="allow-scripts"
+        srcDoc={htmlContent}
       />
     </div>
   );
