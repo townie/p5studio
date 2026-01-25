@@ -80,7 +80,7 @@ RETURNS TABLE (
     name TEXT,
     color TEXT,
     icon TEXT,
-    position INT,
+    "position" INT,
     created_at TIMESTAMPTZ,
     updated_at TIMESTAMPTZ,
     project_count BIGINT
@@ -96,15 +96,15 @@ AS $$
         f.name,
         f.color,
         f.icon,
-        f.position,
+        f."position",
         f.created_at,
         f.updated_at,
         COUNT(p.id) AS project_count
     FROM folders f
     LEFT JOIN projects p ON p.folder_id = f.id
     WHERE f.user_id = p_user_id
-    GROUP BY f.id, f.user_id, f.name, f.color, f.icon, f.position, f.created_at, f.updated_at
-    ORDER BY f.position, f.created_at;
+    GROUP BY f.id, f.user_id, f.name, f.color, f.icon, f."position", f.created_at, f.updated_at
+    ORDER BY f."position", f.created_at;
 $$;
 
 -- Grant execute permission on the helper function
